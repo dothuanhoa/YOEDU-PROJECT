@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: week1
+  profiles:
+    active: ${APP_PROFILE:dev}
+  jpa:
+    show_sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+  sql:
+    init:
+      mode: never
+server:
+  port: 8080
