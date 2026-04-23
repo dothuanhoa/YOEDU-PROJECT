@@ -4,10 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import yoot.week1.domain.AuditableEntity;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "courses")
 public class Course extends AuditableEntity {
 
