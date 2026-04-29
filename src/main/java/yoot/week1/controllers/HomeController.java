@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import yoot.week1.domain.entity.Student;
 import yoot.week1.service.StudentService;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +17,8 @@ public class HomeController {
         return ResponseEntity.ok("\"data\": \"This is my content\"");
     }
 
-    @GetMapping("/students")
-    public ResponseEntity<List<Student>> findAll(){
-        return ResponseEntity.ok(studentService.findByAll());
-    }
+//    @GetMapping("/students")
+//    public ResponseEntity<List<Student>> findAll(){
+//        return ResponseEntity.ok(studentService.findByAll());
+//    }
 }

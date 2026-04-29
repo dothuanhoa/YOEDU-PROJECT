@@ -2,6 +2,7 @@ package yoot.week1.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import yoot.week1.domain.entity.Course;
 import yoot.week1.dto.request.UpdateCourseRequest;
 import yoot.week1.repository.CourseRepository;
@@ -38,11 +39,11 @@ public class CourseServiceImpl implements CourseService {
     public Course updateCourse(Long id, UpdateCourseRequest request){
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not exist"));
-        if(request.name()!=null){
+        if(StringUtils.hasText(request.name())){
             course.setName(request.name());
         }
 
-        if(request.courseCode()!=null){
+        if(StringUtils.hasText(request.courseCode())){
             course.setCourseCode(request.courseCode());
         }
 

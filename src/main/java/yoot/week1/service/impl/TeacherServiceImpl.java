@@ -2,8 +2,10 @@ package yoot.week1.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import yoot.week1.domain.entity.Teacher;
 import yoot.week1.dto.request.UpdateTeacherRequest;
+import yoot.week1.repository.StudentRepository;
 import yoot.week1.repository.TeacherRepository;
 import yoot.week1.service.TeacherService;
 
@@ -37,13 +39,13 @@ public class TeacherServiceImpl implements TeacherService {
 
     public Teacher update(Long id, UpdateTeacherRequest request){
         Teacher teacher = findById(id).orElseThrow(() -> new RuntimeException("Teacher not found"));
-        if (request.teacherCode()!=null){
+        if (StringUtils.hasText(request.teacherCode())){
             teacher.setTeacherCode(request.teacherCode());
         }
-        if (request.fullName()!=null){
+        if (StringUtils.hasText(request.fullName())){
             teacher.setFullName(request.fullName());
         }
-        if (request.email()!=null){
+        if (StringUtils.hasText(request.email())){
             teacher.setEmail(request.email());
         }
 
