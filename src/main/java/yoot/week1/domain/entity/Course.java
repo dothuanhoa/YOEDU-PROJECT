@@ -11,13 +11,13 @@ import yoot.week1.domain.AuditableEntity;
 @Table(name = "courses")
 public class Course extends AuditableEntity {
 
-    @Column(columnDefinition = "varchar(20)")
+    @Column(length = 20)
     private String courseCode;
 
-    @Column(columnDefinition = "varchar(100)")
+    @Column(length = 100)
     private String name;
 
-    @Column(columnDefinition = "varchar(500)")
+    @Column(length = 500)
     private String description;
 
     @Column(columnDefinition = "DECIMAL(10,2)")
@@ -25,5 +25,5 @@ public class Course extends AuditableEntity {
 
     private int totalSessions;
 
-    private boolean isActive;
+    private boolean active;
 }
