@@ -5,4 +5,5 @@ import yoot.week1.domain.entity.Parent;
 
 public interface ParentRepository extends JpaRepository<Parent, Long> {
 
+    boolean existsById(long id);
 }
