@@ -17,3 +17,10 @@ spring:
       mode: never
 server:
   port: 8080
+
+app:
+  jwt:
+    secret: 86168503521dc5a48c4c8959af019c07
+    access-token-ttl-minutes: 480
+    issuer: yoedu-demo
+    refresh-token-ttl-days: 7

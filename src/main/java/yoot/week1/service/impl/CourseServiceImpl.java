@@ -33,20 +33,18 @@ public class CourseServiceImpl implements CourseService {
                 .map(this::map);
     }
 
+    public List<CourseResponse> findActive(){
+        return courseRepository.findCourseActive().stream().map(this::map).toList();
+    }
+
     public CourseResponse create(CourseUpsertRequest request){
         Course c = modelMapper.map(request, Course.class);
-        c.setCreatedAt(LocalDateTime.now());
-        c.setUpdatedAt(LocalDateTime.now());
-
         return map(courseRepository.save(c));
     }
 
     public CourseResponse update(Long id, CourseUpsertRequest request){
         Course c = modelMapper.map(request, Course.class);
         c.setId(id);
-        c.setCreatedAt(LocalDateTime.now());
-        c.setUpdatedAt(LocalDateTime.now());
-
         return map(courseRepository.save(c));
     }
 

@@ -22,6 +22,6 @@ public class CourseUpsertRequest {
     @Min(value = 0)
     private Integer totalSessions=24;
 
-    private Boolean active = true;
+    private Boolean isActive = true;
 
 }

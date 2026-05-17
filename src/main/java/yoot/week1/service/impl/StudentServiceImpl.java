@@ -40,8 +40,6 @@ public class StudentServiceImpl implements StudentService {
         Student s = mapper.map(request, Student.class);
         parentRepository.findById(request.getParentId())
                 .ifPresent(p->s.setParent(p));
-        s.setCreatedAt(LocalDateTime.now());
-        s.setUpdatedAt(LocalDateTime.now());
         Student result = studentRepository.save(s);
         return map(result);
     }
@@ -50,7 +48,6 @@ public class StudentServiceImpl implements StudentService {
         s.setId(id);
         parentRepository.findById(request.getParentId())
                 .ifPresent(p->s.setParent(p));
-        s.setCreatedAt(LocalDateTime.now());
         Student result = studentRepository.save(s);
         return map(result);
     }
