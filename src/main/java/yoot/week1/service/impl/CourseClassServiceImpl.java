@@ -28,6 +28,7 @@ public class CourseClassServiceImpl implements CourseClassService {
     }
 
     private void copyToCourseClass(CourseClass cc , CourseClassUpsertRequest req){
+        mapper.map(req, cc);
         if (req.getCourseId() != null){
             courseRepository.findById(req.getCourseId())
                     .ifPresent(cc::setCourse);
@@ -83,6 +84,8 @@ public class CourseClassServiceImpl implements CourseClassService {
         }else{
             throw new NotFoundException("Course not exists");
         }
-
+    }
+    public void delete(long id){
+        courseClassRepository.deleteById(id);
     }
 }

@@ -8,6 +8,7 @@ import yoot.week1.domain.entity.ScheduleSlot;
 import yoot.week1.domain.entity.Teacher;
 import yoot.week1.domain.enums.ClassStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -40,7 +41,8 @@ public class CourseClassUpsertRequest{
 
         @NotNull @Min(1) Long maxStudents;
 
-        @NotNull @DecimalMin("0.0") Double tuitionFee;
+        @NotNull @DecimalMin("0.0")
+        BigDecimal tuitionFee;
 
         @NotNull ClassStatus status;
 }

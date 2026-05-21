@@ -6,6 +6,7 @@ import lombok.Data;
 import yoot.week1.domain.AuditableEntity;
 import yoot.week1.domain.enums.ClassStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -45,7 +46,7 @@ public class CourseClass extends AuditableEntity {
     private int maxStudents;
 
     @Column(columnDefinition = "decimal", precision = 12, scale = 2)
-    private Double tuitionFee;
+    private BigDecimal tuitionFee;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

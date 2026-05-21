@@ -7,6 +7,6 @@ import yoot.week1.domain.entity.Course;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query("SELECT o FROM Course o WHERE o.isActive=1")
+    @Query("SELECT o FROM Course o WHERE o.isActive=true")
     List<Course> findCourseActive();
 }

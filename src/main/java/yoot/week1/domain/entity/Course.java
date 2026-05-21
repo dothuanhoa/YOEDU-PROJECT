@@ -26,5 +26,5 @@ public class Course extends AuditableEntity {
     private int totalSessions;
 
     @Column(name = "is_active")
-    private Byte isActive;
+    private Boolean isActive;
 }
