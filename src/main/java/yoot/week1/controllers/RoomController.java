@@ -25,6 +25,7 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ApiResponse<RoomResponse> findById(@PathVariable Long id){
         return roomService.findById(id)
                 .map(ApiResponse::success)
@@ -32,11 +33,14 @@ public class RoomController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
+
     public ApiResponse<RoomResponse> save(@RequestBody RoomUpsertRequest request){
         return ApiResponse.success(roomService.save(request));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<RoomResponse> update(@PathVariable long id, @RequestBody RoomUpsertRequest request){
         return ApiResponse.success(roomService.save(id, request));
     }

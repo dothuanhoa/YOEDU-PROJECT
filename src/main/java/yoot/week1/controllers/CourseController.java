@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yoot.week1.common.ApiResponse;
 import yoot.week1.common.exception.NotFoundException;
@@ -22,11 +23,13 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF', 'PARENT')")
     public ResponseEntity<ApiResponse<List<CourseResponse>>> getCourse(){
         return ResponseEntity.ok(ApiResponse.success(courseService.findAll()));
     };
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF', 'PARENT')")
     public ResponseEntity<ApiResponse<CourseResponse>> getCourseById(@PathVariable long id){
         return courseService.findById(id)
                 .map(c -> ResponseEntity.ok(ApiResponse.success(c)))
@@ -34,16 +37,19 @@ public class CourseController {
     };
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ResponseEntity<ApiResponse<CourseResponse>> create(@Valid @RequestBody CourseUpsertRequest request){
         return ResponseEntity.ok(ApiResponse.success(courseService.create(request)));
     };
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ResponseEntity<ApiResponse<CourseResponse>> create(@PathVariable Long id, @Valid @RequestBody CourseUpsertRequest request){
         return ResponseEntity.ok(ApiResponse.success(courseService.update(id, request)));
     };
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id){
         courseService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Delete success"));

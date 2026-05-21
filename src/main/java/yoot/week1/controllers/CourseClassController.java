@@ -19,13 +19,13 @@ public class CourseClassController {
     private final CourseClassService courseClassService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ApiResponse<List<CourseClassResponse>> findAll(){
         return ApiResponse.success(courseClassService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ApiResponse<CourseClassResponse> findById(@PathVariable Long id){
         return courseClassService.findById(id)
                 .map(ApiResponse::success)
@@ -34,13 +34,13 @@ public class CourseClassController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ApiResponse<CourseClassResponse> create(@RequestBody CourseClassUpsertRequest req){
         return ApiResponse.success(courseClassService.create(req));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
     public ApiResponse<CourseClassResponse> update(@PathVariable Long id, @RequestBody CourseClassUpsertRequest req){
         return ApiResponse.success(courseClassService.update(id, req));
     }
