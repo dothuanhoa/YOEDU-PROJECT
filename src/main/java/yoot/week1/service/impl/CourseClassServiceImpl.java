@@ -55,6 +55,10 @@ public class CourseClassServiceImpl implements CourseClassService {
         }
     }
 
+    public CourseClass getCourseClass(long id){
+        return courseClassRepository.getCourseClassesById(id);
+    }
+
     public List<CourseClassResponse> findAll(){
         return courseClassRepository.findAll().stream()
                 .map(this::toClassResponse)

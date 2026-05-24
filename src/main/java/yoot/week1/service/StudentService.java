@@ -14,4 +14,5 @@ public interface StudentService {
     StudentResponse create(StudentUpsertRequest request);
     StudentResponse update(Long id, StudentUpsertRequest request);
     void delete(Long id) throws NotFoundException;
+    Student getStudent(long id);
 }

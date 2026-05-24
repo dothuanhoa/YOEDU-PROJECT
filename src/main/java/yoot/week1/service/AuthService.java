@@ -8,4 +8,5 @@ public interface AuthService {
     AuthResponse refresh(RefreshTokenRequest request);
     void changePassword(String username, ChangePasswordRequest request);
     CurrentUserResponse me(String username);
+    User findActiveUserByUsername(String username);
 }

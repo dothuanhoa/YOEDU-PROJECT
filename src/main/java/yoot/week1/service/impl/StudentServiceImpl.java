@@ -36,6 +36,10 @@ public class StudentServiceImpl implements StudentService {
                 .map(this::map);
     }
 
+    public Student getStudent(long id){
+        return studentRepository.getStudentById(id);
+    }
+
     public StudentResponse create(StudentUpsertRequest request){
         Student s = mapper.map(request, Student.class);
         parentRepository.findById(request.getParentId())
