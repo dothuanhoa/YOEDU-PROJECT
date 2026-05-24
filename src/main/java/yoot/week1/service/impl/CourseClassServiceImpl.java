@@ -3,8 +3,10 @@ package yoot.week1.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yoot.week1.common.exception.NotFoundException;
 import yoot.week1.domain.entity.CourseClass;
+import yoot.week1.domain.entity.Student;
 import yoot.week1.dto.courseclass.CourseClassResponse;
 import yoot.week1.dto.courseclass.CourseClassUpsertRequest;
 import yoot.week1.repository.*;
@@ -55,8 +57,12 @@ public class CourseClassServiceImpl implements CourseClassService {
         }
     }
 
-    public CourseClass getCourseClass(long id){
-        return courseClassRepository.getCourseClassesById(id);
+    @Transactional(readOnly = true)
+    //để load lên những thông tin lazy
+    //get phải lấy object nên phải throw exception, còn find có thể optional
+    public CourseClass getCourseClass(Long id) throws NotFoundException {
+        return courseClassRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Course class not found: " + id));
     }
 
     public List<CourseClassResponse> findAll(){
