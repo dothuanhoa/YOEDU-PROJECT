@@ -1,5 +1,6 @@
 package yoot.week1.service;
 
+import yoot.week1.domain.entity.Enrollment;
 import yoot.week1.dto.enrollment.EnrollmentResponse;
 import yoot.week1.dto.enrollment.EnrollmentUpsertRequest;
 
@@ -9,4 +10,5 @@ public interface EnrollmentService {
     EnrollmentResponse create(EnrollmentUpsertRequest request);
     List<EnrollmentResponse> findByClassId(Long classId);
     List<EnrollmentResponse> findByStudentId(Long studentId, String username);
+    Enrollment getEnrollment(Long studentId, Long classId);
 }

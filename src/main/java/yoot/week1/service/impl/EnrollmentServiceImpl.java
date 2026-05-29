@@ -67,4 +67,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollmentRepository.findByStudent_Id(studentId).stream().map(this::map).toList();
     }
 
+    public Enrollment getEnrollment(Long studentId, Long classId) {
+        return enrollmentRepository.findByStudentIdAndCourseClassId(studentId, classId)
+                .orElseThrow(() -> new BadRequestException("Enrollment not found for student and class"));
+    }
+
 }

@@ -29,6 +29,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final NotificationRepository notificationRepository;
     private final StudentRepository studentRepository;
     private final CourseClassRepository courseClassRepository;
+    private final EnrollmentService enrollmentService;
     private final AuthService authService;
     private final ModelMapper mapper;
 
@@ -39,7 +40,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         validateAttendanceDate(courseClass, request.getAttendanceDate());
 
-//        enrollmentService.getEnrollment(request.studentId(), request.courseClassId());
+        enrollmentService.getEnrollment(request.getStudentId(), request.getCourseClassId());
 
         if (attendanceRepository.existsByCourseClass_IdAndStudent_IdAndAttendanceDate(
                 request.getCourseClassId(), request.getStudentId(), request.getAttendanceDate())) {
@@ -73,6 +74,20 @@ public class AttendanceServiceImpl implements AttendanceService {
             notification.setType(NotificationType.ABSENCE);
             notification.setTitle("Thông báo vắng học");
             notification.setContent("Học viên " + saved.getStudent().getFullName() + " vắng buổi học ngày "
+                    + saved.getAttendanceDate() + ".");
+            notification.setRelatedEntityType("attendance");
+            notification.setRelatedEntityId(saved.getId());
+            notificationRepository.save(notification);
+        }
+
+        if (request.getStatus() == AttendanceStatus.LATE && saved.getStudent().getParent() != null) {
+            Notification notification = new Notification();
+            notification.setRecipientType(NotificationRecipientType.PARENT);
+            notification.setRecipientRefId(saved.getStudent().getParent().getId());
+            notification.setStudent(saved.getStudent());
+            notification.setType(NotificationType.LATE);
+            notification.setTitle("Thông báo trễ học");
+            notification.setContent("Học viên " + saved.getStudent().getFullName() + " đi trễ buổi học ngày "
                     + saved.getAttendanceDate() + ".");
             notification.setRelatedEntityType("attendance");
             notification.setRelatedEntityId(saved.getId());
