@@ -7,7 +7,7 @@ spring:
     show_sql: true
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -24,3 +24,12 @@ app:
     access-token-ttl-minutes: 480
     issuer: yoedu-demo
     refresh-token-ttl-days: 7
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    operations-sorter: alpha
+    tags-sorter: alpha

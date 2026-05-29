@@ -45,8 +45,8 @@ public class CourseClass extends AuditableEntity {
 
     private int maxStudents;
 
-    @Column(columnDefinition = "decimal", precision = 12, scale = 2)
-    private BigDecimal tuitionFee;
+    @Column(columnDefinition = "decimal")
+    private float tuitionFee;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
