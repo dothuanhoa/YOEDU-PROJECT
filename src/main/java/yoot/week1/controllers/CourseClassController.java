@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yoot.week1.common.ApiResponse;
 import yoot.week1.common.exception.NotFoundException;
+import yoot.week1.domain.enums.ClassStatus;
 import yoot.week1.dto.courseclass.CourseClassResponse;
 import yoot.week1.dto.courseclass.CourseClassUpsertRequest;
 import yoot.week1.service.CourseClassService;
@@ -20,8 +21,12 @@ public class CourseClassController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
-    public ApiResponse<List<CourseClassResponse>> findAll(){
-        return ApiResponse.success(courseClassService.findAll());
+    public ApiResponse<List<CourseClassResponse>> findAll(@RequestParam(required = false)ClassStatus status){
+        if (status != null){
+            return ApiResponse.success(courseClassService.findAll(status));
+        }else {
+            return ApiResponse.success(courseClassService.findAll());
+        }
     }
 
     @GetMapping("/{id}")

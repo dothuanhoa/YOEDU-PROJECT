@@ -2,6 +2,7 @@ package yoot.week1.service;
 
 import yoot.week1.common.exception.NotFoundException;
 import yoot.week1.domain.entity.CourseClass;
+import yoot.week1.domain.enums.ClassStatus;
 import yoot.week1.dto.courseclass.CourseClassResponse;
 import yoot.week1.dto.courseclass.CourseClassUpsertRequest;
 
@@ -21,4 +22,5 @@ public interface CourseClassService {
 
     CourseClass getCourseClass(Long id) throws NotFoundException;
 
+    List<CourseClassResponse> findAll(ClassStatus status);
 }

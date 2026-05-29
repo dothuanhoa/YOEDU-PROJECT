@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import yoot.week1.common.exception.NotFoundException;
 import yoot.week1.domain.entity.CourseClass;
 import yoot.week1.domain.entity.Student;
+import yoot.week1.domain.enums.ClassStatus;
 import yoot.week1.dto.courseclass.CourseClassResponse;
 import yoot.week1.dto.courseclass.CourseClassUpsertRequest;
 import yoot.week1.repository.*;
@@ -65,8 +66,15 @@ public class CourseClassServiceImpl implements CourseClassService {
                 .orElseThrow(() -> new NotFoundException("Course class not found: " + id));
     }
 
+
     public List<CourseClassResponse> findAll(){
         return courseClassRepository.findAll().stream()
+                .map(this::toClassResponse)
+                .toList();
+    }
+
+    public List<CourseClassResponse> findAll(ClassStatus status){
+        return courseClassRepository.findAllByStatus(status).stream()
                 .map(this::toClassResponse)
                 .toList();
     }
