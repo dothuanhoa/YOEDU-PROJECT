@@ -2,6 +2,7 @@ package yoot.week1.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yoot.week1.common.ApiResponse;
@@ -26,7 +27,11 @@ public class LearningResultController {
 
     @GetMapping("/student/{studentId}")
     @PreAuthorize("hasAnyRole('ADMIN','ACADEMIC_STAFF','PARENT')")
-    public ApiResponse<List<LearningResultResponse>> findByStudentId(@PathVariable Long studentId, Principal principal) {
-        return ApiResponse.success(learningResultService.findByStudentId(studentId, principal.getName()));
+    public ApiResponse<List<LearningResultResponse>> findByStudentId(@PathVariable Long studentId, Principal principal, @RequestParam(required = false) Integer month,  @RequestParam(required = false) Integer year) {
+        if(month != null && year!=null){
+            return ApiResponse.success(learningResultService.findByStudentId(studentId, principal.getName(), month, year));
+        }else{
+            return ApiResponse.success(learningResultService.findByStudentId(studentId, principal.getName()));
+        }
     }
 }

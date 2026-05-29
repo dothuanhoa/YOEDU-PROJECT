@@ -64,6 +64,17 @@ public class LearningResultServiceImpl implements LearningResultService {
         return learningResultRepository.findByStudentIdOrderByResultMonthDesc(studentId).stream().map(this::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<LearningResultResponse> findByStudentId(Long studentId, String username, Integer month, Integer year) throws BadRequestException, NotFoundException {
+        User user = authService.findActiveUserByUsername(username);
+        if (user.getRole().name().equals("PARENT")) {
+            studentService.getStudentForParent(studentId, user.getParent().getId());
+        }
+        return learningResultRepository.findByStudentIdFilterMonthYear(studentId, month, year).stream().map(this::toResponse).toList();
+    }
+
+
+
     private LearningResultResponse toResponse(LearningResult item) {
         LearningResultResponse response = mapper.map(item, LearningResultResponse.class);
         response.setStudentId(item.getStudent().getId());

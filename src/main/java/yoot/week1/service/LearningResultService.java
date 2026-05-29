@@ -10,4 +10,5 @@ import java.util.List;
 public interface LearningResultService {
     LearningResultResponse create(LearningResultCreateRequest request, String username);
     List<LearningResultResponse> findByStudentId(Long studentId, String username) throws BadRequestException, NotFoundException;
+    public List<LearningResultResponse> findByStudentId(Long studentId, String username, Integer month, Integer year) throws BadRequestException, NotFoundException;
 }
