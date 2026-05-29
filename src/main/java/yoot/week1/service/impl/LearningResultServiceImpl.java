@@ -61,7 +61,7 @@ public class LearningResultServiceImpl implements LearningResultService {
         if (user.getRole().name().equals("PARENT")) {
             studentService.getStudentForParent(studentId, user.getParent().getId());
         }
-        return learningResultRepository.findByStudentId(studentId).stream().map(this::toResponse).toList();
+        return learningResultRepository.findByStudentIdOrderByResultMonthDesc(studentId).stream().map(this::toResponse).toList();
     }
 
     private LearningResultResponse toResponse(LearningResult item) {
