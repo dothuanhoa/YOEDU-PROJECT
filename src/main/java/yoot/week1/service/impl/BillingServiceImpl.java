@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoot.week1.common.exception.BadRequestException;
 import yoot.week1.common.exception.NotFoundException;
+import yoot.week1.domain.entity.Payment;
 import yoot.week1.domain.entity.Promotion;
 import yoot.week1.domain.entity.TuitionInvoice;
 import yoot.week1.domain.entity.User;
@@ -13,12 +14,12 @@ import yoot.week1.domain.enums.DiscountType;
 import yoot.week1.domain.enums.InvoiceStatus;
 import yoot.week1.dto.billing.InvoiceCreateRequest;
 import yoot.week1.dto.billing.InvoiceResponse;
+import yoot.week1.dto.payment.PaymentCreateRequest;
+import yoot.week1.dto.payment.PaymentResponse;
+import yoot.week1.repository.PaymentRepository;
 import yoot.week1.repository.PromotionRepository;
 import yoot.week1.repository.TuitionInvoiceRepository;
-import yoot.week1.service.AuthService;
-import yoot.week1.service.BillingService;
-import yoot.week1.service.CourseClassService;
-import yoot.week1.service.StudentService;
+import yoot.week1.service.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,6 +34,8 @@ public class BillingServiceImpl implements BillingService {
     private final CourseClassService courseClassService;
     private final AuthService authService;
     private final ModelMapper mapper;
+    private final PaymentRepository paymentRepository;
+    private final EnrollmentService enrollmentService;
 
     @Transactional
     public InvoiceResponse createInvoice(InvoiceCreateRequest request) throws NotFoundException {
@@ -82,7 +85,6 @@ public class BillingServiceImpl implements BillingService {
         }
         return promotion.getDiscountValue();
     }
-
     private InvoiceResponse toInvoiceResponse(TuitionInvoice item) {
         InvoiceResponse result = mapper.map(item, InvoiceResponse.class);
         result.setStudentId(item.getStudent().getId());
@@ -95,5 +97,58 @@ public class BillingServiceImpl implements BillingService {
             result.setPromotionName(item.getPromotion().getName());
         }
         return result;
+    }
+
+    @Transactional
+    public PaymentResponse createPayment(PaymentCreateRequest request, String username) throws NotFoundException, BadRequestException {
+        TuitionInvoice invoice = tuitionInvoiceRepository.findById(request.getInvoiceId()).orElseThrow(() -> new NotFoundException("Invoice not found: " + request.getInvoiceId()));
+        if (request.getPaidAmount() <= 0) {
+            throw new BadRequestException("Paid amount must be greater than 0");
+        }
+
+        User cashier = authService.findActiveUserByUsername(username);
+        Payment payment = new Payment();
+        payment.setInvoice(invoice);
+        payment.setPaymentCode(request.getPaymentCode());
+        payment.setPaidAmount(request.getPaidAmount());
+        payment.setPaymentMethod(request.getPaymentMethod());
+        payment.setPaidAt(request.getPaidAt());
+        payment.setCashierUser(cashier);
+        payment.setNote(request.getNote());
+        Payment savedPayment = paymentRepository.save(payment);
+
+        float newAmountPaid = invoice.getAmountPaid() + request.getPaidAmount();
+        float balance = invoice.getFinalAmount() - newAmountPaid;
+        invoice.setAmountPaid(newAmountPaid);
+        invoice.setBalanceAmount(balance);
+        invoice.setStatus(calculateInvoiceStatus(balance, newAmountPaid));
+        tuitionInvoiceRepository.save(invoice);
+
+        return toPaymentResponse(savedPayment);
+    }
+
+    private InvoiceStatus calculateInvoiceStatus(float balance, float amountPaid) {
+        if (balance < 0) {
+            return InvoiceStatus.OVERPAID;
+        }
+        if (balance == 0) {
+            return InvoiceStatus.PAID;
+        }
+        if (amountPaid  > 0) {
+            return InvoiceStatus.PARTIAL;
+        }
+        return InvoiceStatus.UNPAID;
+    }
+
+    private PaymentResponse toPaymentResponse(Payment item) {
+        PaymentResponse response  = mapper.map(item, PaymentResponse.class);
+        response.setInvoiceId(item.getInvoice().getId());
+        response.setInvoiceCode(item.getInvoice().getInvoiceCode());
+        response.setPaymentMethod(item.getPaymentMethod().toString());
+        if (item.getCashierUser() != null) {
+            response.setCashierUserId(item.getCashierUser().getId());
+            response.setCashierUsername(item.getCashierUser().getUsername());
+        }
+        return response;
     }
 }

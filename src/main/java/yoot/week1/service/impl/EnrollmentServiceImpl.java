@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoot.week1.common.exception.BadRequestException;
+import yoot.week1.common.exception.NotFoundException;
 import yoot.week1.domain.entity.CourseClass;
 import yoot.week1.domain.entity.Enrollment;
 import yoot.week1.domain.entity.Student;
@@ -26,15 +27,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentService studentService;
     private final CourseClassService courseClassService;
-    private final AuthService authService;
     private final ModelMapper mapper;
 
-    private EnrollmentResponse map(Enrollment en){
-        return mapper.map(en, EnrollmentResponse.class);
-    }
-
     @Transactional
-    public EnrollmentResponse create(EnrollmentUpsertRequest request) {
+    public EnrollmentResponse create(EnrollmentUpsertRequest request) throws BadRequestException, NotFoundException {
         if (enrollmentRepository.existsByStudent_IdAndCourseClass_Id(request.getStudentId(), request.getCourseClassId())) {
             throw new BadRequestException("Student is already enrolled in this class");
         }
@@ -46,30 +42,37 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         Student student = studentService.getStudent(request.getStudentId());
-        Enrollment enrollment = mapper.map(request, Enrollment.class);
+        Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setCourseClass(courseClass);
-        return map(enrollmentRepository.save(enrollment));
+        enrollment.setEnrolledAt(request.getEnrolledAt());
+        enrollment.setStatus(request.getStatus());
+        enrollment.setNote(request.getNote());
+        return toResponse(enrollmentRepository.save(enrollment));
     }
 
     @Transactional(readOnly = true)
     public List<EnrollmentResponse> findByClassId(Long classId) {
-        return enrollmentRepository.findByCourseClass_Id(classId).stream().map(this::map).toList();
+        return enrollmentRepository.findByCourseClass_Id(classId).stream().map(this::toResponse).toList();
     }
 
-    @Transactional(readOnly = true)
+    @Override
     public List<EnrollmentResponse> findByStudentId(Long studentId, String username) {
-        User user = authService.findActiveUserByUsername(username);
-        if (user.getRole().name().equals("PARENT")) {
-            //Đăng nhập bằng PARENT chỉ được coi con của người đó, không được coi con người ta
-            studentService.getStudentForParent(studentId, user.getParent().getId());
-        }
-        return enrollmentRepository.findByStudent_Id(studentId).stream().map(this::map).toList();
+        return List.of();
     }
 
-    public Enrollment getEnrollment(Long studentId, Long classId) {
+    public Enrollment getEnrollment(Long studentId, Long classId) throws BadRequestException {
         return enrollmentRepository.findByStudentIdAndCourseClassId(studentId, classId)
                 .orElseThrow(() -> new BadRequestException("Enrollment not found for student and class"));
     }
 
+    private EnrollmentResponse toResponse(Enrollment enrollment) {
+        EnrollmentResponse result = mapper.map(enrollment, EnrollmentResponse.class);
+        result.setStudentId(enrollment.getStudent().getId());
+        result.setStudentName(enrollment.getStudent().getFullName());
+        result.setCourseClassId(enrollment.getCourseClass().getId());
+        result.setClassName(enrollment.getCourseClass().getName());
+        result.setStatus(enrollment.getStatus().toString());
+        return result;
+    }
 }

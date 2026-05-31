@@ -12,8 +12,9 @@ import java.time.LocalDateTime;
 public class EnrollmentResponse {
     private Long id;
     private Long studentId;
+    private String studentName;
     private Long courseClassId;
-    private BigDecimal tuitionFee;
+    private String className;
     private LocalDate enrolledAt;
     private String status;
     private String note;
